@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management_system/core/color/color_constants.dart';
 import 'package:project_management_system/core/global/helper_function.dart';
 import 'package:project_management_system/features/add_project/view/add_project_screen.dart';
 import 'package:project_management_system/features/home/controller/homescreen_controller.dart';
-import 'package:project_management_system/features/home/widget/homecontainer.dart';
+import 'package:project_management_system/features/home/widget/gridview_container.dart';
 import 'package:project_management_system/features/home/widget/project_overview_container.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -32,6 +34,18 @@ class _HomescreenState extends State<Homescreen> {
           "Spine Codes",
           style: TextStyle(color: AppColor.white, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Provider.of<HomescreenController>(context, listen: false)
+                    .logout(context);
+              },
+              icon: Icon(
+                Icons.logout,
+                color: Colors.white,
+                size: 18,
+              ))
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -106,12 +120,8 @@ class _HomescreenState extends State<Homescreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AddProjectScreen(
-                                  isEdit: false,
-                                ),
-                              ));
+                            onPressed: () async {
+                              provider.addProject(context);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

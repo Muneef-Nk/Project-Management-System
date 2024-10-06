@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_management_system/core/global/helper_function.dart';
+import 'package:project_management_system/features/add_project/view/add_project_screen.dart';
 import 'package:project_management_system/features/home/model/upcomming_model.dart';
+import 'package:project_management_system/features/login/view/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomescreenController with ChangeNotifier {
   int totalOngoingProjects = 0;
@@ -49,5 +54,42 @@ class HomescreenController with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (route) => false,
+    );
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', false);
+    prefs.remove('userId');
+    notifyListeners();
+  }
+
+  addProject(BuildContext context) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('userId');
+
+    DocumentSnapshot userDoc = await usersCollection.doc(id).get();
+
+    if (userDoc.exists) {
+      String userRole = userDoc['role'];
+
+      if (userRole == 'Admin') {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AddProjectScreen(isEdit: false),
+        ));
+      } else {
+        showSnackBar(
+            context: context, message: "Only Admins can add projects.");
+      }
+    }
   }
 }

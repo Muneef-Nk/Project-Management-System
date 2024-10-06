@@ -93,7 +93,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                   }).toList();
 
                   if (filteredProjects.isEmpty) {
-                    return Center(child: Text('No projects match your search'));
+                    return Center(
+                        child: Text(
+                      'No project found',
+                      style: TextStyle(color: AppColor.grey, fontSize: 12),
+                    ));
                   }
 
                   return ListView.builder(

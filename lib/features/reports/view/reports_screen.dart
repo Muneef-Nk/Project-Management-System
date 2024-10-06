@@ -149,7 +149,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: Text(
-                                'You have no completedp rojects \nat the moment',
+                                'Completed project not found',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

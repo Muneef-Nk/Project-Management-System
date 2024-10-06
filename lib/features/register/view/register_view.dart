@@ -148,7 +148,7 @@ class RegisterView extends StatelessWidget {
                           color: AppColor.primary,
                           borderRadius: BorderRadius.circular(10)),
                       child: Center(
-                        child: !provider.isLoading
+                        child: provider.isLoading
                             ? Loading()
                             : Text(
                                 "Register",

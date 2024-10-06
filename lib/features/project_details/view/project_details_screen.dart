@@ -12,6 +12,7 @@ import 'package:project_management_system/features/project_details/widgets/amoun
 import 'package:project_management_system/features/project_details/widgets/dates_row.dart';
 import 'package:project_management_system/features/project_list/model/project_list_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectDetailScreen extends StatefulWidget {
   final ProjectListModel? projectListModel;
@@ -57,15 +58,9 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                 icon: Icon(Icons.more_vert, color: AppColor.white),
                 onSelected: (value) {
                   if (value == 'Edit Details') {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddProjectScreen(
-                                  isEdit: true,
-                                  projectModel: projectDetailsModel,
-                                  projectId: widget.projectListModel?.id,
-                                )));
-                  } else if (value == 'Edit Details') {
+                    editProject(context);
+                  } else if (value == 'Delete Details') {
+                    deleteProject(context);
                   } else if (value == 'Add Payment') {
                     Navigator.push(
                         context,
@@ -333,5 +328,64 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         })
       ],
     );
+  }
+
+  editProject(BuildContext context) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('userId');
+
+    DocumentSnapshot userDoc = await usersCollection.doc(id).get();
+
+    if (userDoc.exists) {
+      String userRole = userDoc['role'];
+
+      if (userRole == 'Admin' || userRole == 'Project Manager') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddProjectScreen(
+                      isEdit: true,
+                      projectModel: projectDetailsModel,
+                      projectId: widget.projectListModel?.id,
+                    )));
+      } else {
+        showSnackBar(
+            context: context,
+            message:
+                "Only Admins and Project Managers can edit projects details.");
+      }
+    }
+  }
+
+  deleteProject(BuildContext context) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    CollectionReference projects =
+        FirebaseFirestore.instance.collection('projects');
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('userId');
+
+    DocumentSnapshot userDoc = await usersCollection.doc(id).get();
+
+    if (userDoc.exists) {
+      String userRole = userDoc['role'];
+
+      if (userRole == 'Admin') {
+        await projects.doc(widget.projectListModel?.id).delete();
+        showSnackBar(
+            context: context,
+            message: "Project deleted successfully.",
+            color: AppColor.primary);
+        Navigator.of(context).pop();
+      } else {
+        showSnackBar(
+            context: context, message: "Only Admins can delete projects.");
+      }
+    }
   }
 }
