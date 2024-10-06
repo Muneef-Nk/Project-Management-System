@@ -1,143 +1,201 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:project_management_system/core/color_constanst/color_constants.dart';
+import 'package:project_management_system/core/color/color_constants.dart';
+import 'package:project_management_system/core/global/helper_function.dart';
 import 'package:project_management_system/features/add_project/view/add_project_screen.dart';
+import 'package:project_management_system/features/home/controller/homescreen_controller.dart';
+import 'package:project_management_system/features/home/widget/homecontainer.dart';
+import 'package:project_management_system/features/home/widget/project_overview_container.dart';
+import 'package:provider/provider.dart';
 
-class Homescreen extends StatelessWidget {
+class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<DateTime> deliveryDates = [
-      DateTime.now().add(const Duration(days: 1)), // Tomorrow
-      DateTime.now().add(const Duration(days: 3)), // 3 days from now
-      DateTime.now().add(const Duration(days: 5)), // 5 days from now
-      DateTime.now().add(const Duration(days: 7)), // 1 week from now
-    ];
+  State<Homescreen> createState() => _HomescreenState();
+}
 
+class _HomescreenState extends State<Homescreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<HomescreenController>(context, listen: false).getDetails();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: AppColor.primary,
+        surfaceTintColor: AppColor.primary,
+        title: Text(
+          "Spine Codes",
+          style: TextStyle(color: AppColor.white, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Column(
-            children: [
-              // GridView.builder with 4 items and 2 columns
-
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-
-                itemCount: 4, // Number of items
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 columns
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 2, // Item width to height ratio
+          child:
+              Consumer<HomescreenController>(builder: (context, provider, _) {
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: HomeContainer(
+                        icon: 'assets/launch.png',
+                        value: provider.totalOngoingProjects.toString(),
+                        label: 'Ongoing',
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: HomeContainer(
+                        icon: 'assets/flag.png',
+                        value: provider.totalCompletedProjects.toString(),
+                        label: 'Completed',
+                      ),
+                    )
+                  ],
                 ),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: boxDecoration(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("ongoing"),
-                              Icon(Icons.foggy),
-                            ],
+                SizedBox(height: 20),
+                HomeContainer(
+                  icon: 'assets/send.png',
+                  value: '₹${provider.totalAdvanceAmount}',
+                  label: 'Total Amounts Received',
+                ),
+                SizedBox(height: 20),
+                HomeContainer(
+                  icon: 'assets/money.png',
+                  value: '₹${provider.totalBalanceAmount}',
+                  label: 'Balance Amounts',
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  decoration: boxDecoration(),
+                  padding: EdgeInsets.only(top: 15, left: 15, right: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Start a New Project!',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.primary,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: Text(
+                          'Click the button below to add your project and manage your tasks effectively!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
-                          Text("20"),
-                        ],
-                      ));
-                },
-              ),
-              SizedBox(height: 20), // ListView.builder
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Insights',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Add project logic here
-                      print("clicked");
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddProjectScreen()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primary, // Custom button color
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Add Project',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 30), // ListView.builder
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Upcommig delivery"),
-              ),
-              SizedBox(height: 10), // ListView.builder
-
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: deliveryDates.length,
-                itemBuilder: (BuildContext context, int index) {
-                  DateTime date = deliveryDates[index];
-                  String formattedDate =
-                      DateFormat('MMM d, yyyy').format(date); // Format date
-
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 5),
-                    decoration: boxDecoration(),
-                    child: ListTile(
-                      leading: Icon(Icons.delivery_dining), // Icon for delivery
-                      title: Text('B2C Bazazar'),
-                      subtitle: Row(
+                      SizedBox(height: 15),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(formattedDate),
-                          Text(
-                              'Days left: ${date.difference(DateTime.now()).inDays} days'),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => AddProjectScreen(
+                                  isEdit: false,
+                                ),
+                              ));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  AppColor.primary, // Custom button color
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Add Project',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          Image.asset(
+                            'assets/virtual-reality.png',
+                            width: 80,
+                            fit: BoxFit.cover,
+                          ),
                         ],
                       ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                ProjectStatusOvervewContainer(),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Upcommig delivery",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 10),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: provider.upcomingDeliveryDates.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    DateTime date = provider.upcomingDeliveryDates[index].date;
+                    String formattedDate =
+                        DateFormat('MMM d, yyyy').format(date);
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      decoration: boxDecoration(),
+                      child: ListTile(
+                        leading: Image.asset(
+                          'assets/upcoming.png',
+                          width: 30,
+                        ),
+                        title: Text(
+                          provider.upcomingDeliveryDates[index].projectName,
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              formattedDate,
+                              style: TextStyle(
+                                color: AppColor.grey,
+                              ),
+                            ),
+                            Text(
+                              'Days left: ${date.difference(DateTime.now()).inDays} days',
+                              style: TextStyle(
+                                  color: AppColor.primary,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );
-  }
-
-  BoxDecoration boxDecoration() {
-    return BoxDecoration(
-        color: AppColor.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            spreadRadius: 1,
-            blurRadius: 5,
-          )
-        ],
-        borderRadius: BorderRadius.circular(8));
   }
 }

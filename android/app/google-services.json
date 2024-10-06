@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "205592946832",
-    "project_id": "project-management-syste-722bf",
-    "storage_bucket": "project-management-syste-722bf.appspot.com"
+    "project_number": "524992279536",
+    "project_id": "project-management-syste-31a2b",
+    "storage_bucket": "project-management-syste-31a2b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:205592946832:android:51c5c5deae3fdde98d5015",
-        "android_client_info": {
-          "package_name": "com.example.proj"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCrz-v7V5-dNoleX6OXKDRc_h6WvBMk0FQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:205592946832:android:fad2c43ad2b76dcc8d5015",
+        "mobilesdk_app_id": "1:524992279536:android:690fdce20278a8586f2335",
         "android_client_info": {
           "package_name": "com.example.project_management_system"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCrz-v7V5-dNoleX6OXKDRc_h6WvBMk0FQ"
+          "current_key": "AIzaSyBT7y1LFn5WuwNKK93vFbU7PvRfP5TP_38"
         }
       ],
       "services": {
