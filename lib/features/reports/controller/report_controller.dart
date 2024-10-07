@@ -12,7 +12,7 @@ import 'package:project_management_system/features/reports/model/ongoing_project
 class ReportController with ChangeNotifier {
   List<OngoingProjectModel> ongoingProjects = [];
   List<CompletedProjectModel> completedProjects = [];
-  int advancePayments = 0;
+  double advancePayments = 0;
   double totalBalanceAmount = 0.0;
 
   Future<void> getDetails() async {
@@ -23,7 +23,7 @@ class ReportController with ChangeNotifier {
 
     List<OngoingProjectModel> tempOngoingProjects = [];
     List<CompletedProjectModel> tempCompletedProjects = [];
-    int totalAdvancePayments = 0;
+    double totalAdvancePayments = 0;
     double totalBalance = 0.0;
 
     querySnapshot.docs.forEach((doc) {
@@ -33,6 +33,8 @@ class ReportController with ChangeNotifier {
       String balance = doc['balance']?.toString() ?? '0';
       DateTime? deliveryDate = DateTime.parse(doc['delivery_date']);
 
+      print('$advancePayment');
+
       if (status == 'In Progress') {
         OngoingProjectModel ongoingProject = OngoingProjectModel(
           projectName: projectName,
@@ -41,8 +43,9 @@ class ReportController with ChangeNotifier {
         );
         tempOngoingProjects.add(ongoingProject);
 
-        totalAdvancePayments += int.tryParse(advancePayment) ?? 0;
+        totalAdvancePayments += double.tryParse(advancePayment) ?? 0.0;
         totalBalance += double.tryParse(balance) ?? 0.0;
+        print('advance $totalAdvancePayments');
       } else if (status == 'Completed') {
         CompletedProjectModel completedProject = CompletedProjectModel(
           projectName: projectName,
@@ -50,6 +53,8 @@ class ReportController with ChangeNotifier {
           date: deliveryDate,
         );
         tempCompletedProjects.add(completedProject);
+        totalBalance += double.tryParse(balance) ?? 0.0;
+      } else if (status == 'Pending') {
         totalBalance += double.tryParse(balance) ?? 0.0;
       }
     });

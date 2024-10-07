@@ -71,8 +71,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     ReportTile(
                       label: "Total Balance Due",
-                      subText: "for all clients/projects",
-                      amountColor: Colors.green,
+                      subText: "for all projects",
+                      amountColor: Colors.red,
                       amount: provider.totalBalanceAmount.toString(),
                     ),
                   ],
@@ -84,7 +84,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ongoing Project',
+                      'Ongoing Projects',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

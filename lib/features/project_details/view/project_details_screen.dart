@@ -59,7 +59,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                 onSelected: (value) {
                   if (value == 'Edit Details') {
                     editProject(context);
-                  } else if (value == 'Delete Details') {
+                  } else if (value == 'Delete Project') {
                     deleteProject(context);
                   } else if (value == 'Add Payment') {
                     Navigator.push(
@@ -371,6 +371,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     String? id = prefs.getString('userId');
 
     DocumentSnapshot userDoc = await usersCollection.doc(id).get();
+
+    print('inside ');
 
     if (userDoc.exists) {
       String userRole = userDoc['role'];
